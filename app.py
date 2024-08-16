@@ -38,20 +38,21 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(movie_id))
 
     return recommended_movies, recommended_posters
-
+  
 @app.route('/fetch-movies', methods=["GET"])
 def fetch_movies():
     name = request.args.get('name')
     
     if not name:
-        return jsonify({"error": "No movie name provided"}), 400
+        return jsonify({"error": "No movie name provided", "status": 400}), 400
 
     recommended_movies, recommended_posters = recommend(name)
 
     if not recommended_movies:
-        return jsonify({"error": "Movie not found"}), 404
+        return jsonify({"error": "Movie not found" , "status":404}), 404
 
     return jsonify({
+        "status" : 200,
         "recommended_movies": recommended_movies,
         "recommended_posters": recommended_posters
     })
