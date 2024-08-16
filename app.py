@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 def fetch_poster(movie_id):
     url = f"https://api.themoviedb.org/3/movie/{movie_id}?api_key=2784c86bbf7f14344a8fb2f0afa10f08&language=en-US"
-    data = requests.get(url).json()
+    data = requests.get(url, timeout=5).json()
     poster_path = data.get('poster_path')
     if poster_path:
         full_path = f"https://image.tmdb.org/t/p/w500/{poster_path}"
@@ -30,14 +30,20 @@ def recommend(movie):
     
     recommended_movies = []
     recommended_posters = []
-    
+    recommended_overview = []
+    recommended_genre = []
+
     for i in distances[1:6]:  # Skip the first one because it is the movie itself
         movie_title = new_data.iloc[i[0]].title
+        overview = new_data.iloc[i[0]].overview
+        genre = new_data.iloc[i[0]].genre
         movie_id = new_data.iloc[i[0]].id
         recommended_movies.append(movie_title)
         recommended_posters.append(fetch_poster(movie_id))
+        recommended_overview.append(overview)
+        recommended_genre.append(genre)
 
-    return recommended_movies, recommended_posters
+    return recommended_movies, recommended_posters, recommended_overview, recommended_genre
   
 @app.route('/fetch-movies', methods=["GET"])
 def fetch_movies():
@@ -46,7 +52,7 @@ def fetch_movies():
     if not name:
         return jsonify({"error": "No movie name provided", "status": 400}), 400
 
-    recommended_movies, recommended_posters = recommend(name)
+    recommended_movies, recommended_posters, recommended_overview, recommended_genre = recommend(name)
 
     if not recommended_movies:
         return jsonify({"error": "Movie not found" , "status":404}), 404
@@ -54,7 +60,9 @@ def fetch_movies():
     return jsonify({
         "status" : 200,
         "recommended_movies": recommended_movies,
-        "recommended_posters": recommended_posters
+        "recommended_posters": recommended_posters,
+        "recommended_overview": recommended_overview,
+        "recommended_genre": recommended_genre
     })
 
 if __name__ == '__main__':
