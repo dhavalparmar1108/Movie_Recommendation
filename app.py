@@ -33,7 +33,7 @@ def recommend(movie):
     recommended_overview = []
     recommended_genre = []
 
-    for i in distances[1:6]:  # Skip the first one because it is the movie itself
+    for i in distances[1:16]:  # Skip the first one because it is the movie itself
         movie_title = new_data.iloc[i[0]].title
         overview = new_data.iloc[i[0]].overview
         genre = new_data.iloc[i[0]].genre
