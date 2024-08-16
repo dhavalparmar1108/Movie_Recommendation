@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 import requests
 import pickle
 import gzip
+import numpy as np
 
 app = Flask(__name__)
 
@@ -20,12 +21,18 @@ with gzip.open('similarity.pkl.gz', 'rb') as f:
     similarity = pickle.load(f)
 
 movie_list = new_data['title'].values
+movie_list = [title.lower() for title in movie_list]
+
+print(movie_list[0:5])
 
 def recommend(movie):
+    movie = movie.lower()
+    movie = movie.strip()
+    print(movie)
     if movie not in movie_list:
-        return [], []  # Handle case where the movie is not found
+        return [], [], [], []  # Handle case where the movie is not found
 
-    index = new_data[new_data['title'] == movie].index[0]
+    index = new_data[new_data['title'].str.lower() == movie].index[0]
     distances = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda vector: vector[1])
     
     recommended_movies = []
