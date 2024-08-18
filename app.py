@@ -25,6 +25,11 @@ movie_list = [title.lower() for title in movie_list]
 
 print(movie_list[0:5])
 
+def getSuggestion(movie):
+    suggestions = new_data[new_data['title'].str.startswith(movie, case = False)]
+    suggestions = suggestions['title'].head(5)
+    return suggestions.values.tolist()
+
 def recommend(movie):
     movie = movie.lower()
     movie = movie.strip()
@@ -70,6 +75,15 @@ def fetch_movies():
         "recommended_posters": recommended_posters,
         "recommended_overview": recommended_overview,
         "recommended_genre": recommended_genre
+    })
+
+@app.route('/fetch-suggestions', methods=["GET"])
+def fetch_suggestions():
+    name = request.args.get('name')
+    suggestions = getSuggestion(name)
+    return jsonify({
+        "status" : 200,
+        "recommended_movies": suggestions,
     })
 
 if __name__ == '__main__':
