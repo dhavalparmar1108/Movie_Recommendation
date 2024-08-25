@@ -23,11 +23,9 @@ with gzip.open('similarity.pkl.gz', 'rb') as f:
 movie_list = new_data['title'].values
 movie_list = [title.lower() for title in movie_list]
 
-print(movie_list[0:5])
-
 def getSuggestion(movie):
-    suggestions = new_data[new_data['title'].str.startswith(movie, case = False)]
-    suggestions = suggestions['title'].head(5)
+    suggestions = new_data[new_data['title'].str.lower().startsWith(movie.lower())]
+    suggestions = suggestions['title'].head(10)
     return suggestions.values.tolist()
 
 def recommend(movie):
