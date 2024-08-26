@@ -55,7 +55,7 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(movie_id))
         recommended_overview.append(overview)
         recommended_genre.append(genre)
-        recommended_id.append(movie_id)
+        recommended_id.append(int(movie_id))
 
     return recommended_movies, recommended_posters, recommended_overview, recommended_genre, recommended_id
   
