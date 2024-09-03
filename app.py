@@ -35,7 +35,7 @@ def recommend(movie):
     movie = movie.strip()
     print(movie)
     if movie not in movie_list:
-        return [], [], [], []  # Handle case where the movie is not found
+        return [], [], [], [], [] # Handle case where the movie is not found
 
     index = new_data[new_data['title'].str.lower() == movie].index[0]
     distances = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda vector: vector[1])
@@ -90,6 +90,6 @@ def fetch_suggestions():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)
 
    
