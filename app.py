@@ -35,7 +35,7 @@ def recommend(movie):
     movie = movie.strip()
     print(movie)
     if movie not in movie_list:
-        return [], [], [], []  # Handle case where the movie is not found
+        return [], [], [], [], [] # Handle case where the movie is not found
 
     index = new_data[new_data['title'].str.lower() == movie].index[0]
     distances = sorted(list(enumerate(similarity[index])), reverse=True, key=lambda vector: vector[1])
@@ -44,6 +44,7 @@ def recommend(movie):
     recommended_posters = []
     recommended_overview = []
     recommended_genre = []
+    recommended_id = []
 
     for i in distances[1:16]:  # Skip the first one because it is the movie itself
         movie_title = new_data.iloc[i[0]].title
@@ -54,8 +55,9 @@ def recommend(movie):
         recommended_posters.append(fetch_poster(movie_id))
         recommended_overview.append(overview)
         recommended_genre.append(genre)
+        recommended_id.append(int(movie_id))
 
-    return recommended_movies, recommended_posters, recommended_overview, recommended_genre
+    return recommended_movies, recommended_posters, recommended_overview, recommended_genre, recommended_id
   
 @app.route('/fetch-movies', methods=["GET"])
 def fetch_movies():
@@ -64,7 +66,7 @@ def fetch_movies():
     if not name:
         return jsonify({"error": "No movie name provided", "status": 400}), 400
 
-    recommended_movies, recommended_posters, recommended_overview, recommended_genre = recommend(name)
+    recommended_movies, recommended_posters, recommended_overview, recommended_genre, recommended_id = recommend(name)
 
     if not recommended_movies:
         return jsonify({"error": "Movie not found" , "status":404}), 404
@@ -74,7 +76,8 @@ def fetch_movies():
         "recommended_movies": recommended_movies,
         "recommended_posters": recommended_posters,
         "recommended_overview": recommended_overview,
-        "recommended_genre": recommended_genre
+        "recommended_genre": recommended_genre,
+        "recommended_id": recommended_id
     })
 
 @app.route('/fetch-suggestions', methods=["GET"])
@@ -87,6 +90,6 @@ def fetch_suggestions():
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", debug=True)
 
    
